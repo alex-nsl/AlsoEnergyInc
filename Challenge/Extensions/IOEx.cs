@@ -1,4 +1,5 @@
 ﻿using AE.CoreInterface;
+using AE.Domain;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -395,7 +396,7 @@ namespace AE.CoreUtility
             if (sz == int.MaxValue) return null;
             if (ix + sz > buf.Length) throw new IOExException("Invalid string length");
             if (sz <= 0) return String.Empty;
-            string ret = Encoding.ASCII.GetString(buf, ix, sz);
+            string ret = Encoding.UTF8.GetString(buf, ix, sz);
             ix += sz;
             return ret;
         }
@@ -534,6 +535,7 @@ namespace AE.CoreUtility
             }
             t = ioval?.GetType();
 #endif // !SQLCLRDLL
+            if (ioval is PermissionSet) ioval = (byte[])(ioval as PermissionSet);
             //if (ioval is IDAKeys<DAKeyVirtual>) ioval = ((IDAKeys<DAKeyVirtual>)ioval).Keys?.Select(z => z.VKEY).ToArray();
             //if (ioval is IDAKeys<DAKey>) ioval = ((IDAKeys<DAKey>)ioval).Nums?.ToArray();
             //if (ioval is IDAKeyVirtual) ioval = ((IDAKeyVirtual)ioval).VKEY;

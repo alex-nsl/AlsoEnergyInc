@@ -1,4 +1,5 @@
 ﻿using AE.CoreUtility;
+using AE.Domain;
 using System;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,8 @@ namespace ChallengeTest
         public readonly static Guid TestGuid = new Guid(new string('F', 32));
 
         [Fact]
-        public void IOEx_BlobIO() {
+        public void IOEx_BlobIO()
+        {
             string[] map = new string[] { "Int", "Int", "NVarChar", "VarBinary" };
             object[] val = new object[] { 1234, IOEx.SafeIO<int>(null), "初めまして", Encoding.UTF8.GetBytes("This is a binary string") };
             BlobIO b = new BlobIO(map, val);
@@ -98,7 +100,8 @@ namespace ChallengeTest
             Assert.True(bio?.Length > io.Length);
             Assert.True(bio?.Length < (io.Length * 4));
             int ix = 0;
-            foreach (var pair in BlobIO.ToBlobList(bio)) {
+            foreach (var pair in BlobIO.ToBlobList(bio))
+            {
                 Assert.Equal(--ix, pair.Key);
                 Assert.True(CollectionEx.ArrayEquals(pair.Value, io.Take(pair.Value.Length)));
             }
@@ -146,7 +149,8 @@ namespace ChallengeTest
             Assert.True(bio?.Length > io.Length);
             Assert.True(bio?.Length < (io.Length * 4));
             ix = 0;
-            foreach (var pair in BlobIO.ToBlobList(bio)) {
+            foreach (var pair in BlobIO.ToBlobList(bio))
+            {
                 Assert.Equal(--ix, pair.Key);
                 Assert.True(CollectionEx.ArrayEquals(pair.Value, io.Take(pair.Value.Length)));
             }
@@ -168,7 +172,8 @@ namespace ChallengeTest
             Assert.True(bio?.Length > io.Length);
             Assert.True(bio?.Length < (io.Length * 4));
             io = b.PrefixIO.Concat(b.DataIO).ToArray();
-            foreach (var pair in BlobIO.ToBlobList(bio)) {
+            foreach (var pair in BlobIO.ToBlobList(bio))
+            {
                 Assert.Equal(0, pair.Key);
                 Assert.True(CollectionEx.ArrayEquals(pair.Value, io));
             }
@@ -194,7 +199,8 @@ namespace ChallengeTest
             Assert.True(bio?.Length > io.Length);
             Assert.True(bio?.Length < (io.Length * 4));
             io = b.PrefixIO.Concat(b.DataIO).ToArray();
-            foreach (var pair in BlobIO.ToBlobList(bio)) {
+            foreach (var pair in BlobIO.ToBlobList(bio))
+            {
                 Assert.Equal(-1, pair.Key);
                 Assert.True(CollectionEx.ArrayEquals(pair.Value, io));
             }
@@ -218,7 +224,8 @@ namespace ChallengeTest
             Assert.True(bio?.Length > io.Length);
             Assert.True(bio?.Length < (io.Length * 4));
             io = b.PrefixIO.Concat(b.DataIO).ToArray();
-            foreach (var pair in BlobIO.ToBlobList(bio)) {
+            foreach (var pair in BlobIO.ToBlobList(bio))
+            {
                 Assert.Equal(-1, pair.Key);
                 Assert.True(CollectionEx.ArrayEquals(pair.Value, io));
             }
@@ -246,7 +253,8 @@ namespace ChallengeTest
             Assert.True(bio?.Length < (io.Length * 4));
             io = b.PrefixIO.Concat(b.DataIO).ToArray();
             ix = 0;
-            foreach (var pair in BlobIO.ToBlobList(bio)) {
+            foreach (var pair in BlobIO.ToBlobList(bio))
+            {
                 Assert.Equal(--ix, pair.Key);
                 Assert.True(CollectionEx.ArrayEquals(pair.Value, io));
             }
@@ -278,7 +286,8 @@ namespace ChallengeTest
             Assert.True(bio?.Length < (io.Length * 4));
             io = b.PrefixIO.Concat(b.DataIO).ToArray();
             ix = 0;
-            foreach (var pair in BlobIO.ToBlobList(bio)) {
+            foreach (var pair in BlobIO.ToBlobList(bio))
+            {
                 Assert.Equal(--ix, pair.Key);
                 Assert.True(CollectionEx.ArrayEquals(pair.Value, io));
             }
@@ -352,6 +361,34 @@ namespace ChallengeTest
             ix = 0;
             foreach (var pair in BlobIO.ToBlobList(bio))
                 Assert.Equal(--ix, pair.Key);
+        }
+
+        [Fact]
+        public void IOEx_BlobIO_Domain()
+        {
+            PermissionSet ps = new PermissionSet();
+            ps.GrantPermission(Permissions.Permission12);
+            string[] map = new string[] { "VarBinary" };
+            object[] val = new object[] { ps };
+            BlobIO b = new BlobIO(map, val);
+            var tmpps = b.GetPermissionSet(0);
+            Assert.True(tmpps.HasPermission(Permissions.Permission12));
+
+            ps = new PermissionSet();
+            ps.GrantPermission(Permissions.Permission1);
+            b = null;
+            b += ps;
+            tmpps = b.GetPermissionSet(0);
+            Assert.True(tmpps.HasPermission(Permissions.Permission1));
+            Assert.False(tmpps.HasPermission(Permissions.Permission12));
+
+            ps = new PermissionSet();
+            ps.GrantPermission(Permissions.Permission100);
+            b = null;
+            b += ps;
+            tmpps = b.GetPermissionSet(0);
+            Assert.True(tmpps.HasPermission(Permissions.Permission100));
+            Assert.False(tmpps.HasPermission(Permissions.Permission1));
         }
     }
 }

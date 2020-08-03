@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using AE.CoreInterface;
+using AE.Domain;
 #if NETSTANDARD || SQLCLRDLL
 using SQLDBT = System.Data.SqlDbType;
 #endif //  NETSTANDARD || SQLCLRDLL
@@ -76,6 +77,7 @@ namespace AE.CoreUtility
         public static BlobIO operator +(BlobIO b, TimeSpan v) { return (b ?? (b = new BlobIO())).Concat(v) ? b : null; }
         public static BlobIO operator +(BlobIO b, string v) { return (b ?? (b = new BlobIO())).Concat(v) ? b : null; }
         public static BlobIO operator +(BlobIO b, byte[] v) { return (b ?? (b = new BlobIO())).Concat(v) ? b : null; }
+        public static BlobIO operator +(BlobIO b, PermissionSet v) { return (b ?? (b = new BlobIO())).Concat((byte[])v) ? b : null; }
         public static BlobIO operator +(BlobIO b, BlobIO v) { return b == null ? v?.Dupe() : v == null ? v : b.Concat(v) ? b : null; }
 
         internal const bool c_usebigendian = true; // use big endian for binary serialization to help sorting
@@ -1157,6 +1159,7 @@ namespace AE.CoreUtility
         public TimeSpan? GetTime(int ix, bool convert = false) { TimeSpan ret; return Get(ix, out ret, convert) ? ret : (TimeSpan?)null; }
         public string GetString(int ix, bool convert = false) { string ret; return Get(ix, out ret, convert) ? ret : null; }
         public byte[] GetBytes(int ix, bool convert = false) { byte[] ret; return Get(ix, out ret, convert) ? ret : null; }
+        public PermissionSet GetPermissionSet(int ix, bool convert = false) { byte[] ret; return Get(ix, out ret, convert) ? new PermissionSet(ret) : null; }
 
         /// <summary>
         /// Troubleshoot serialized blob import by returning detected elements and indexes as the serialized bytes are imported

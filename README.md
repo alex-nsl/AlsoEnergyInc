@@ -3,15 +3,15 @@
 - You will need Visual Studio to complete challenges outlined below. We suggest you utilize one of the community editions provided at https://www.visualstudio.com/downloads/
 - Clone this repo to your local machine
 - Use it to create a new repo on GitHub under your own account (please don't use GitHub fork to accomplish this)
-- Complete the challenge below or provide an alternative representative sample of code or classes that is solely your work product. 
+- Complete the challenge below or provide an alternative representative sample of code or classes that is solely your work product.
   (If you maintain a github project where you are the sole contributor, please feel free to submit a link and description of what we should review in the repository.)
 - Send us an email with a link to your repo and any instructions or details you want to share about key features, performance optimizations or creative problem solving skills that they exemplify.
 
 ## Also Energy Code Challenge
 
-### Please review the projects in the Challenge solution and perform the following tasks. Please feel free to be creative and simplify when possible. 
+### Please review the projects in the Challenge solution and perform the following tasks. Please feel free to be creative and simplify when possible.
 
-1) Add a PermissionSet class to hold a fixed list of 100 user permissions (i.e. perm1, perm2, ...). 
+1) Add a PermissionSet class to hold a fixed list of 100 user permissions (i.e. perm1, perm2, ...).
    The PermissionSet should be able to serialize as a byte array.
 
 2) Add the ability for the BlobIO class to append and retrieve the new user permission class.
@@ -27,7 +27,27 @@
 6) Provide a brief comment for each of the following:
 
    - Concept or element that was unfamiliar or unexpected
+Probably nothing.
 
    - Constructive review or recommended improvement
 
+1. Calls:
+
+string[] map = new string[] { "VarBinary" };
+object[] val = new object[] { ps };
+new BlobIO(map, val);
+
+and
+
+ps = new PermissionSet();
+b.Set(0, ps);
+
+Are not symmetric. In second case binary array is serialized with length when in first case without. I suppose correct design should be symmetric, behavior should be the same in both cases.
+
+2. Instead of explicit declaring of each supportable by BlobIO complex type it would be simpler to introduce ISerializable interface.
+
    - Opportunity or future enhancement
+1. Consider google protobuf usage: https://developers.google.com/protocol-buffers
+2. Depends on business area concurent implementation could be usefull
+3. Logging for investigations \ diagnostic.
+4. Performance testing.
